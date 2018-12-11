@@ -14,7 +14,8 @@ export default {
     }
   },
   data: () => ({
-    playerName: ''
+    playerName: '',
+    displayNameLengthError: ''
   }),
   created() {
     if (this.started) {
@@ -55,12 +56,25 @@ export default {
     start() {
       this.send(start());
     },
-    setName(event, name) {
+    setName(event) {
+      let name = event.target.value;
       if (event.data === ' ') {
+        name = name.trim();
+      }
+      if (name.length > 12) {
+        name = name.substring(0, 12);
+        event.target.value = name;
+
+        this.displayNameLengthError = true;
+
+        setTimeout(() => {
+          this.displayNameLengthError = false;
+        }, 3000);
+
         return;
       }
       this.playerName = name;
-      this.send(setName(name.trim()));
+      this.send(setName(name));
     },
   }
 };
@@ -88,10 +102,12 @@ export default {
 
   .section
     h2 who are you?
-    input.player-name-entry(v-model='playerName' type='text' @input='setName($event, playerName)' placeholder='12 char max, no space')
+    div
+      input.player-name-entry(:value='playerName' type='text' @input='setName($event)' placeholder='12 chars, no spaces')
+      span.error.player-name-length-error(v-if='displayNameLengthError') (12 char max)
 
   .section.errors(v-if='common && common.errors')
-    h3(v-for='error in Object.keys(common.errors)' key='error') {{error}}
+    h3.error(v-for='error in Object.keys(common.errors)' key='error') {{error}}
 
   button.section.start(v-show='allPlayersReady' @click='start') everyone's ready!
 </template>
@@ -124,7 +140,6 @@ export default {
 
   .errors {
     text-align: center;
-    color: red;
   }
 
   ul {
@@ -138,6 +153,11 @@ export default {
 
     font-size: 30px;
     background-color: white;
+  }
+
+  .error {
+    color: red;
+    font-weight: bold;
   }
 }
 </style>

@@ -47,7 +47,7 @@ export default {
         button(@click='gameSlug = "fake-artist"') fake-artist
     template(v-else-if='path === "/join"')
       label(for='room-code') room code
-      input(id='room-code' type='text' :value='roomCode' @input='roomCodeInput' @change='roomCodeChange')
+      input(autofocus id='room-code' type='text' :value='roomCode' @input='roomCodeInput' @change='roomCodeChange')
       button join
 </template>
 
